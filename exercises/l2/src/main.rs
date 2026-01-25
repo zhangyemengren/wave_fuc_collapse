@@ -22,9 +22,17 @@ struct WFCManager {
 
 impl WFCManager {
     /// 初始化网格，所有格子处于全叠加态
-    fn new(size: usize, tiles: Vec<&'static str>, rules_map: HashMap<&'static str, HashMap<Direction, Vec<&'static str>>>) -> Self {
+    fn new(
+        size: usize,
+        tiles: Vec<&'static str>,
+        rules_map: HashMap<&'static str, HashMap<Direction, Vec<&'static str>>>,
+    ) -> Self {
         let grid = vec![vec![tiles; size]; size];
-        Self { size, grid, rules: rules_map }
+        Self {
+            size,
+            grid,
+            rules: rules_map,
+        }
     }
 
     /// 执行特定坐标的坍缩
@@ -38,7 +46,6 @@ impl WFCManager {
         let mut stack = vec![(start_x, start_y)];
 
         while let Some((cx, cy)) = stack.pop() {
-
             // 检查四个方向
             let neighbors = [
                 (0, -1, Direction::Up),

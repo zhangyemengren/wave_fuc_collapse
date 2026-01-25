@@ -1,5 +1,5 @@
+use rand::seq::IndexedRandom;
 use std::collections::{HashMap, HashSet};
-use rand::seq::{IndexedRandom};
 
 /**
 * 图块根规则 复杂度增加
@@ -23,9 +23,17 @@ struct WFCManager {
 
 impl WFCManager {
     /// 初始化网格，所有格子处于全叠加态
-    fn new(size: usize, tiles: Vec<&'static str>, rules_map: HashMap<&'static str, HashMap<Direction, Vec<&'static str>>>) -> Self {
+    fn new(
+        size: usize,
+        tiles: Vec<&'static str>,
+        rules_map: HashMap<&'static str, HashMap<Direction, Vec<&'static str>>>,
+    ) -> Self {
         let grid = vec![vec![tiles; size]; size];
-        Self { size, grid, rules: rules_map }
+        Self {
+            size,
+            grid,
+            rules: rules_map,
+        }
     }
 
     /// 执行特定坐标的坍缩
@@ -39,7 +47,6 @@ impl WFCManager {
         let mut stack = vec![(start_x, start_y)];
 
         while let Some((cx, cy)) = stack.pop() {
-
             // 检查四个方向
             let neighbors = [
                 (0, -1, Direction::Up),
@@ -108,7 +115,7 @@ impl WFCManager {
             for x in 0..self.size {
                 let len = self.grid[y][x].len();
                 // 只关注还没确定的格子
-                if len > 1{
+                if len > 1 {
                     if len < min_entropy {
                         min_entropy = len;
                         candidates.clear();
@@ -126,7 +133,9 @@ impl WFCManager {
             //     从当前格子的可能性中随机选择
             let chosen_tile = {
                 let possibilities = &self.grid[y][x];
-                *possibilities.choose(&mut rand::rng()).expect("可能性不能为空")
+                *possibilities
+                    .choose(&mut rand::rng())
+                    .expect("可能性不能为空")
             };
             self.collapse(x, y, chosen_tile);
             self.display();
@@ -152,19 +161,31 @@ fn main() {
         for (name_other, sockets_other) in &tile_data {
             // 向上看：我的 [上] 必须等于邻居的 [下]
             if sockets[0] == sockets_other[1] {
-                dir_map.entry(Direction::Up).or_insert(vec![]).push(*name_other);
+                dir_map
+                    .entry(Direction::Up)
+                    .or_insert(vec![])
+                    .push(*name_other);
             }
             // 向下看：我的 [下] 必须等于邻居的 [上]
             if sockets[1] == sockets_other[0] {
-                dir_map.entry(Direction::Down).or_insert(vec![]).push(*name_other);
+                dir_map
+                    .entry(Direction::Down)
+                    .or_insert(vec![])
+                    .push(*name_other);
             }
             // 向左看：我的 [左] 必须等于邻居的 [右]
             if sockets[2] == sockets_other[3] {
-                dir_map.entry(Direction::Left).or_insert(vec![]).push(*name_other);
+                dir_map
+                    .entry(Direction::Left)
+                    .or_insert(vec![])
+                    .push(*name_other);
             }
             // 向右看：我的 [右] 必须等于邻居的 [左]
             if sockets[3] == sockets_other[2] {
-                dir_map.entry(Direction::Right).or_insert(vec![]).push(*name_other);
+                dir_map
+                    .entry(Direction::Right)
+                    .or_insert(vec![])
+                    .push(*name_other);
             }
         }
         rules.insert(*name, dir_map);
